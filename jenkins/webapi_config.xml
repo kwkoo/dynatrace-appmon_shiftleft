@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>appip</name>
+          <description>Defines the IP Address of the web application we want to test</description>
+          <defaultValue>localhost</defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <com.dynatrace.jenkins.dashboard.TATestRunRegistrationBuildStep plugin="dynatrace-dashboard@2.0.5">
+      <category>webapi</category>
+      <platform></platform>
+    </com.dynatrace.jenkins.dashboard.TATestRunRegistrationBuildStep>
+    <hudson.tasks.Shell>
+		<command>wget http://${appip}:9080/to-read         -d --header=&quot;x-dynatrace: NA=reading.to-read;TR=$dtTestrunID&quot;
+wget http://${appip}:9080/to-read/Fiction -d --header=&quot;x-dynatrace: NA=reading.to-read.fiction;TR=$dtTestrunID&quot;
+wget http://${appip}:9080/to-read/Misc    -d --header=&quot;x-dynatrace: NA=reading.to-read.misc;TR=$dtTestrunID&quot;
+wget http://${appip}:9090/recommended     -d --header=&quot;x-dynatrace: NA=bookstore.recommended;TR=$dtTestrunID&quot;
+wget http://${appip}:9090/genres          -d --header=&quot;x-dynatrace: NA=bookstore.genres;TR=$dtTestrunID&quot;
+wget http://${appip}:9090/all             -d --header=&quot;x-dynatrace: NA=bookstore.all;TR=$dtTestrunID&quot;
+sleep 240</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <com.dynatrace.jenkins.dashboard.TAReportingRecorder plugin="dynatrace-dashboard@2.0.5">
+      <modifyStatusIfDegraded>true</modifyStatusIfDegraded>
+      <modifyStatusIfVolatile>false</modifyStatusIfVolatile>
+      <statusNameIfDegraded>UNSTABLE</statusNameIfDegraded>
+      <statusNameIfVolatile>UNSTABLE</statusNameIfVolatile>
+      <printXmlReportForDebug>true</printXmlReportForDebug>
+    </com.dynatrace.jenkins.dashboard.TAReportingRecorder>
+  </publishers>
+  <buildWrappers>
+    <com.dynatrace.jenkins.dashboard.TABuildWrapper plugin="dynatrace-dashboard@2.0.5">
+      <systemProfile>ShiftLeftAMGroup</systemProfile>
+      <versionMajor>1</versionMajor>
+      <versionMinor>1</versionMinor>
+      <versionRevision>1</versionRevision>
+      <versionMilestone></versionMilestone>
+      <marker></marker>
+      <recordSession>false</recordSession>
+    </com.dynatrace.jenkins.dashboard.TABuildWrapper>
+  </buildWrappers>
+</project>

@@ -1,0 +1,8 @@
+#!/bin/bash
+if [ ${DT_SERVER_LICENSE} ]; then
+  LICENSE_NAME=dtlicense.lic
+  DT_SERVER_LICENSE_KEY_FILE="${DT_HOME}/server/conf/${LICENSE_NAME}"
+
+  cp ${DT_HOME}/${DT_SERVER_LICENSE} ${DT_SERVER_LICENSE_KEY_FILE}
+  chmod 0600 ${DT_SERVER_LICENSE_KEY_FILE}
+fi

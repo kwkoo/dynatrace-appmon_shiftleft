@@ -1,0 +1,43 @@
+version: "3"
+volumes:
+  git:
+
+services:
+  dtserver:
+    build:
+      context: ./Dynatrace-Server
+      args:
+        - DT_HOME=/opt/dynatrace
+        - VERSION=7.0
+        - BUILD_VERSION=7.0.0.2469
+        - DT_SERVER_LICENSE=appmon.lic
+    container_name: shiftleftdtserver
+    image: "shiftleft/dtserver:7.0"
+    ports:
+      - 8020:8020
+      - 8021:8021
+      - 2021:2021
+      - 9911:9911
+
+  git:
+    build:
+      context: ./git
+    container_name: git
+    image: "shiftleft/git"
+    volumes:
+      - git:/git
+
+  jenkins:
+    build:
+      context: ./jenkins
+    container_name: jenkins
+    image: "shiftleft/jenkins"
+    ports:
+      - 8080:8080
+      - 50000:50000
+      - 9080:9080
+      - 9090:9090
+    volumes:
+      - git:/git
+    depends_on:
+      - git
